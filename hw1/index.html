@@ -61,7 +61,7 @@
 		</p>
 		
 		<p>
-		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).	
+		For each integer pixel coordinate <code>(x, y)</code> in the bounding box, I compute the sample position at the center of the pixel <code>(x + 0.5, y + 0.5)</code>.	
 		</p>
 
 		<p>
@@ -69,7 +69,7 @@
 		</p>
 			
 		<p>
-		My algorithm is no worse than sampling every pixel in the bounding box because I use the bounding box only computed by min() and max() of the triangle’s vertex coordinates. Also, I only check sample points within this bounding box, not the entire framebuffer. For each sample in the bounding box, I run a point-in-triangle test.
+		My algorithm is no worse than sampling every pixel in the bounding box because I use the bounding box only computed by <code>min()</code> and <code>max()</code> of the triangle’s vertex coordinates. Also, I only check sample points within this bounding box, not the entire framebuffer. For each sample in the bounding box, I run a point-in-triangle test.
 		</p>
 			
 		<figure>
@@ -89,19 +89,19 @@
 		</p>	
 		
 		<p>
-		I use sample_buffer, a 1D std::vector<Color>, which stores color values for all subpixel samples. It has width * height * sample_rate entries. Each pixel stores sample_rate subsamples, laid out row-wise (e.g., 4 samples per pixel for 2x2 grid). Note that index = (y * width + x) * sample_rate + (j * sqrt_rate + i) where (i, j) is the subpixel position inside the sqrt_rate x sqrt_rate grid for that pixel.
+		I use <code>sample_buffer</code>, a 1D <code>std::vector<Color></code>, which stores color values for all subpixel samples. It has <code>width * height * sample_rate</code> entries. Each pixel stores <code>sample_rate</code> subsamples, laid out row-wise (e.g., 4 samples per pixel for 2x2 grid). Note that <code>index = (y * width + x) * sample_rate + (j * sqrt_rate + i)</code> where <code>(i, j)</code> is the subpixel position inside the <code>sqrt_rate * sqrt_rate</code> grid for that pixel.
 		</p>
 		
 		<p>
-		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).	
+		For each integer pixel coordinate <code>(x, y)</code> in the bounding box, I compute the sample position at the center of the pixel <code>(x + 0.5, y + 0.5)</code>.	
 		</p>
 
 		<p>
-		Instead of testing a single point at (x + 0.5, y + 0.5), I test sqrt(sample_rate)^2 points within each pixel. Each subpixel sample is tested for coverage using a helper function, inside_tri(...), and written to the appropriate index in sample_buffer.
+		Instead of testing a single point at <code>(x + 0.5, y + 0.5)</code>, I test <code>sample_rate</code> points within each pixel. Each subpixel sample is tested for coverage using a helper function, <code>inside_tri()</code>, and written to the appropriate index in <code>sample_buffer</code>.
 		</p>
 			
 		<p>
-		After all triangles are rasterized, this function averages the colors of all subpixel samples for each pixel, then writes the averaged color to rgb_framebuffer_target.
+		After all triangles are rasterized, this function averages the colors of all subpixel samples for each pixel, then writes the averaged color to <code>framebuffer</code>.
 		</p>
 
 		<p>
@@ -109,7 +109,7 @@
 		</p>
 
 		<p> 
-		To summarize the antialiasing process, each triangle is rasterized by evaluating multiple subpixel sample positions per pixel. Then, a sample is filled if it lies inside the triangle. After rasterizing all triangles, resolve_to_framebuffer() computes the final pixel color by averaging all the subpixel colors. This smooths out triangle edges and eliminates jaggedness, especially at shallow or steep angles.
+		To summarize the antialiasing process, each triangle is rasterized by evaluating multiple subpixel sample positions per pixel. Then, a sample is filled if it lies inside the triangle. After rasterizing all triangles, <code>resolve_to_framebuffer()</code> computes the final pixel color by averaging all the subpixel colors. This smooths out triangle edges and eliminates jaggedness, especially at shallow or steep angles.
 		</p>
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -138,7 +138,7 @@
 		</div>
 
 		<p> 
-		These images demonstrate the impact of sample_rate on rendering quality. A higher sample_rate means more color samples are taken per pixel, leading to a more accurate average color. This increased precision significantly reduces aliasing artifacts, resulting in noticeably smoother edges and finer detail representation in the rendered image.
+		These images demonstrate the impact of sample_rate on rendering quality. A higher sample rate means more color samples are taken per pixel, leading to a more accurate average color. This increased precision significantly reduces aliasing artifacts, resulting in noticeably smoother edges and finer detail representation in the rendered image.
 		</p>
 
 
@@ -190,7 +190,7 @@
 		</figure>
 
 		<p>
-		As shown in the image below, when the three vertices of a triangle are assigned distinct colors (e.g., red, green, blue), the interior of the triangle displays a smooth blend of these colors. This occurs because the \( \alpha, \beta, \gamma \) values from the barycentric coordinate system are used to interpolate the colors based on the point's proximity to each vertex.
+		As shown in the image above, when the three vertices of a triangle are assigned distinct colors (e.g., red, green, blue), the interior of the triangle displays a smooth blend of these colors. This occurs because the \( \alpha, \beta, \gamma \) values from the barycentric coordinate system are used to interpolate the colors based on the point's proximity to each vertex.
 		</p>
 
 		<figure>
@@ -205,7 +205,7 @@
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
 
 		<p>
-		In 3D graphics, texture mapping is the process of applying a 2D image (texture) to the surface of a 3D model. When rendering, each pixel on the screen corresponds to a specific point on the 3D model's surface, which in turn maps to a specific coordinate within the 2D texture. The process of determining the color of a screen pixel based on this texture coordinate is called **pixel sampling**.
+		In 3D graphics, texture mapping is the process of applying a 2D image (texture) to the surface of a 3D model. When rendering, each pixel on the screen corresponds to a specific point on the 3D model's surface, which in turn maps to a specific coordinate within the 2D texture. The process of determining the color of a screen pixel based on this texture coordinate is called pixel sampling.
 		</p>
 
 		<p>
@@ -213,7 +213,7 @@
 		</p>
 
 		<p>
-		Once we have the interpolated (u, v) coordinates, we sample with the desired sampling method, P_NEAREST or P_LINEAR.
+		Once we have the interpolated (u, v) coordinates, we sample with the desired sampling method, <code>P_NEAREST</code> or <code>P_LINEAR</code>.
 		</p>
 
 		<p>
