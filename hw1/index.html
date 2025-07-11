@@ -262,7 +262,7 @@
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
 
 		<p>
-    		Level sampling is a technique used in texture mapping to select the appropriate level of detail (LOD) from a series of precomputed, downscaled versions of a texture, called mipmaps. These mipmaps reduce aliasing artifacts that occur when textures are viewed at smaller scales or steep angles.
+    		Level sampling is a technique used in texture mapping to select the appropriate level of detail from a series of precomputed, downscaled versions of a texture, called mipmaps. These mipmaps reduce aliasing artifacts that occur when textures are viewed at smaller scales or steep angles.
   		</p>
 
 		<p>
@@ -279,35 +279,7 @@
   		</p>
 
 		<p>
-		Through this project, I have noticed the following tradeoffs between sampling techniques which are pixel sampling, level sampling, and samples per pixel.
-		</p>
-
-		<ul>
-    			<li><strong>Pixel Sampling:</strong> Determines how to fetch a color value from a given mipmap level.
-      				<ul>
-        				<li><code>P_NEAREST</code>: Fastest, but prone to aliasing.</li>
-       					<li><code>P_LINEAR</code>: Smooth interpolation between neighboring texels, offering better visual quality at slightly more cost.</li>
-      				</ul>
-   			 </li>
-    
-			<li><strong>Level Sampling:</strong> Chooses how to determine which mipmap level to use.
-      				<ul>
-        				<li><code>L_ZERO</code>: Simple and fast, but can cause severe aliasing.</li>
-        				<li><code>L_NEAREST</code>: Balances speed and quality, picks the most appropriate mip level.</li>
-        				<li><code>L_LINEAR</code>: Best quality via trilinear filtering, but slower due to extra texture fetches and blending.</li>
-      				</ul>
-    			</li>
-			
-    			<li><strong>Samples Per Pixel:</strong> Supersampling helps fight aliasing by averaging multiple samples per pixel.
-      				<ul>
-        				<li>Higher sample rates improve image quality significantly.</li>
-        				<li>However, they increase memory usage (more sample buffer storage) and computational cost (more sampling calls per pixel).</li>
-      				</ul>
-    			</li>
- 		</ul>
-
-		<p>
-		Overall, there's a clear tradeoff between performance and quality. For fast rendering, using <code>P_NEAREST</code>, <code>L_ZERO</code>, and 1 sample per pixel gives speed at the cost of visual artifacts. At the other end, <code>P_LINEAR</code>, <code>L_LINEAR</code>, and high supersampling yields excellent visualizations as we can see the results below, but requires more computation and memory.
+		Through this project, I have clearly noticed tradeoffs between sampling techniques which are pixel sampling, level sampling, and samples per pixel, in terms of performance and quality. For fast rendering, using <code>L_ZERO</code>, <code>P_NEAREST</code>, and 1 sample rate would give speed at the cost of visual artifacts. On the other hand, <code>L_LINEAR</code>, <code>P_LINEAR</code>, and high supersampling yields excellent visualizations, as we can see the results below, but requires more computation and memory.
 		</p>
 		
 		<div style="display: flex; flex-direction: column; align-items: center;">
