@@ -57,17 +57,14 @@
 		<p>To rasterize a triangle, I use the line test method based on 2D cross products.</p>	
 		
 		<p>
-		Bounding Box:
 		I first compute the bounding box of the triangle using the three vertices. This gives the range of pixels that might contain parts of the triangle.
 		</p>
 		
 		<p>
-		Sample at Pixel Centers:
 		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).	
 		</p>
 
 		<p>
-		Point-in-Triangle Test:
 		For each sample point, I use three edge tests. Each test uses a 2D cross product to determine which side of an edge the sample lies on. If the sample lies on the same side of all three edges or directly on them, it is inside the triangle. This handles all triangle winding orders (clockwise or counter-clockwise) and draws pixels.
 		</p>
 			
@@ -79,35 +76,71 @@
 			<img src="Task1_rasterize.png" alt="Task1_raterize.png" style="width:50%"/>
 			<figcaption>Rendered basic/test4.svg</figcaption>
 		</figure>
-		
+
+
+
+
+
+
 		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+				
+		<p>
+		Supersampling is an anti-aliasing technique that reduces jagged edges (aliasing) by sampling multiple points within each pixel and averaging their colors. Instead of sampling just the center of each pixel, we sample a finer grid within the pixel and blend the results to get smoother edges. Aliasing artifacts occur because we're representing high-frequency visual information (like sharp edges or fine lines) with too few samples. Supersampling mitigates this by effectively increasing the resolution and then downsampling, preserving edge quality.
+		</p>	
 		
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>
+		I use sample_buffer, a 1D std::vector<Color>, which stores color values for all subpixel samples. It has width * height * sample_rate entries. Each pixel stores sample_rate subsamples, laid out row-wise (e.g., 4 samples per pixel for 2x2 grid). Note that index = (y * width + x) * sample_rate + (j * sqrt_rate + i) where (i, j) is the subpixel position inside the sqrt_rate x sqrt_rate grid for that pixel.
+		</p>
+		
+		<p>
+		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).	
+		</p>
+
+		<p>
+		Instead of testing a single point at (x + 0.5, y + 0.5), I test sqrt(sample_rate)^2 points within each pixel. Each subpixel sample is tested for coverage using a helper function, inside_tri(...), and written to the appropriate index in sample_buffer.
+		</p>
+			
+		<p>
+		After all triangles are rasterized, this function averages the colors of all subpixel samples for each pixel, then writes the averaged color to rgb_framebuffer_target.
+		</p>
+
+		<p>
+		For lines and points, we write the same color to all subsamples within a pixel, since high-quality antialiasing for lines wasn’t required.
+		</p>
+
+		<p> 
+		To summarize the antialiasing process, each triangle is rasterized by evaluating multiple subpixel sample positions per pixel. Then, a sample is filled if it lies inside the triangle. After rasterizing all triangles, resolve_to_framebuffer() computes the final pixel color by averaging all the subpixel colors. This smooths out triangle edges and eliminates jaggedness, especially at shallow or steep angles.
+		</p>
+
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="supersample_rate1.png" width="400px"/>
+				  <figcaption>Sample rate = 1</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="supersample_rate4.png" width="400px"/>
+				  <figcaption>Sample rate = 4</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="supersample_rate9.png" width="400px"/>
+				  <figcaption>Sample rate = 9</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="lion.jpg" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="supersample_rate16.png" width="400px"/>
+				  <figcaption>Sample rate = 16</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
+
+
+
+
+			
 		<h2>Task 3: Transforms</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
