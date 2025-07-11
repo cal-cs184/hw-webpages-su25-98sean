@@ -170,19 +170,18 @@
 
 
 
-
 		<h2>Task 4: Barycentric coordinates</h2>
 		
 		<p>
-		Barycentric coordinates allow us to express any point inside a triangle as a weighted average of its three vertices. If we denote the triangle's vertices as $P_0, P_1, P_2$, then any arbitrary point $P$ within the triangle can be represented as:
+		Barycentric coordinates allow us to express any point inside a triangle as a weighted average of its three vertices. If we denote the triangle's vertices as \( P_0, P_1, P_2 \), then any arbitrary point \( P \) within the triangle can be represented as:
 		</p>
 
 		<div class="equation">
-            	$P = \alpha P_0 + \beta P_1 + \gamma P_2$
+            	\[ P = \alpha P_0 + \beta P_1 + \gamma P_2 \]
         	</div>
 		
 		<P>
-		Here, $\alpha, \beta, \gamma$ are the weighting factors of each vertex. The sum of these three values always equals 1 ($\alpha + \beta + \gamma = 1$). For points inside the triangle, all $\alpha, \beta, \gamma$ values will be between 0 and 1.
+		Here, \( \alpha, \beta, \gamma \) are the weighting factors of each vertex. The sum of these three values always equals 1 (\( \alpha + \beta + \gamma = 1 \)). For points inside the triangle, all \( \alpha, \beta, \gamma \) values will be between 0 and 1.
 		</P>
 		
 		<figure>
@@ -191,7 +190,7 @@
 		</figure>
 
 		<p>
-		As shown in the image below, when the three vertices of a triangle are assigned distinct colors (e.g., red, green, blue), the interior of the triangle displays a smooth blend of these colors. This occurs because the $\alpha, \beta, \gamma$ values from the barycentric coordinate system are used to interpolate the colors based on the point's proximity to each vertex.
+		As shown in the image below, when the three vertices of a triangle are assigned distinct colors (e.g., red, green, blue), the interior of the triangle displays a smooth blend of these colors. This occurs because the \( \alpha, \beta, \gamma \) values from the barycentric coordinate system are used to interpolate the colors based on the point's proximity to each vertex.
 		</p>
 
 		<figure>
@@ -204,8 +203,62 @@
 
 		
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+		<p>
+		In 3D graphics, texture mapping is the process of applying a 2D image (texture) to the surface of a 3D model. When rendering, each pixel on the screen corresponds to a specific point on the 3D model's surface, which in turn maps to a specific coordinate within the 2D texture. The process of determining the color of a screen pixel based on this texture coordinate is called **pixel sampling**.
+		</p>
+
+		<p>
+		To perform texture mapping, my implementation iterates through each pixel (and sub-pixel for supersampling) within the triangle's bounding box. For each such point, we first compute its 2D texture coordinates (u, v) using barycentric interpolation from the triangle's vertices.
+		</p>
+
+		<p>
+		Once we have the interpolated (u, v) coordinates, we sample with the desired sampling method, P_NEAREST or P_LINEAR.
+		</p>
+
+		<p>
+		"Nearest Neighbor Sampling" directly selects the color of the single texel (texture pixel) that is closest to that coordinate for a given (u, v) texture coordinate. 
+		</p>
+
+		<p>
+		"Bilinear Interpolation" computes a weighted average of the colors of the four texels surrounding the given (u, v) texture coordinate. The weights are determined by how close the coordinate is to each of the four surrounding texels.
+		</p>
+			
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="nearest_sample1.png" width="400px"/>
+				  <figcaption>Nearest sample, rate = 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bilinear_sample1.png" width="400px"/>
+				  <figcaption>Bilinear sample, rate = 1</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="nearest_sample16.png" width="400px"/>
+				  <figcaption>Nearest sample, rate = 16</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bilinear_sample16.png" width="400px"/>
+				  <figcaption>Bilinear sample, rate = 16</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+		The choice between Nearest Neighbor and Bilinear Interpolation significantly impacts the visual quality of the rendered texture. As we can notice from the above images, Nearest Neighbor is faster but produces jaggy appearances, especially when textures are magnified. Bilinear Interpolation, while slightly slower, offers a smoother, more natural look by blending colors, reducing jaggedness and aliasing.
+		</p>
+
+		<p>
+		The visual difference becomes large when textures are magnified, as Nearest Neighbor clearly shows individual texels while Bilinear provides a softer and blended result. The differences can also be found in texture minification or with sharp texture details, where Bilinear effectively avoids aliasing artifacts like shimmering or stair-stepping.
+		</p>
+			
+			
+			
 		<h2>Task 6: "Level Sampling" with mipmaps for texture mapping</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
