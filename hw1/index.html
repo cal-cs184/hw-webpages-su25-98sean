@@ -172,8 +172,37 @@
 
 
 		<h2>Task 4: Barycentric coordinates</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		
+		<p>
+		Barycentric coordinates allow us to express any point inside a triangle as a weighted average of its three vertices. If we denote the triangle's vertices as $P_0, P_1, P_2$, then any arbitrary point $P$ within the triangle can be represented as:
+		</p>
 
+		<div class="equation">
+            	$P = \alpha P_0 + \beta P_1 + \gamma P_2$
+        	</div>
+		
+		<P>
+		Here, $\alpha, \beta, \gamma$ are the weighting factors of each vertex. The sum of these three values always equals 1 ($\alpha + \beta + \gamma = 1$). For points inside the triangle, all $\alpha, \beta, \gamma$ values will be between 0 and 1.
+		</P>
+		
+		<figure>
+			<img src="barycentric_triangle.png" style="width:100%"/>
+			<figcaption>Barycentric applied to a triangle with one red, one green, and one blue vertex</figcaption>
+		</figure>
+
+		<p>
+		As shown in the image below, when the three vertices of a triangle are assigned distinct colors (e.g., red, green, blue), the interior of the triangle displays a smooth blend of these colors. This occurs because the $\alpha, \beta, \gamma$ values from the barycentric coordinate system are used to interpolate the colors based on the point's proximity to each vertex.
+		</p>
+
+		<figure>
+			<img src="barycentric.png" style="width:100%"/>
+			<figcaption>Rendered svg/basic/test7.svg</figcaption>
+		</figure>
+			
+			
+
+
+		
 		<h2>Task 5: "Pixel sampling" for texture mapping</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
