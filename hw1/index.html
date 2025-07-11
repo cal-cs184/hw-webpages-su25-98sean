@@ -38,40 +38,51 @@
 
 		Link to GitHub repository: <a href="https://github.com/cal-cs184/hw-webpages-su25-98sean">hw-webpages-su25-98sean</a>
 
+		<!--
 		<figure>
 			<img src="lion.jpg" alt="Lion" style="width:50%"/>
 			<figcaption>You can add images with captions!</figcaption>
 		</figure>
 
-		<!--
+		
 		We've already added one heading per task, to make your write-up as navigable when grading. Please fit your write-up within these sections!
-		-->
 
-		<!--
+		
 		<h2>Overview</h2>
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 		-->
 		
 		<h2>Task 1: Drawing Single-Color Triangles</h2>
-		To rasterize a triangle, I use the line test method based on 2D cross products.
-
+		
+		<p>To rasterize a triangle, I use the line test method based on 2D cross products.</p>	
+		
+		<p>
 		Bounding Box:
 		I first compute the bounding box of the triangle using the three vertices. This gives the range of pixels that might contain parts of the triangle.
-
+		</p>
+		
+		<p>
 		Sample at Pixel Centers:
-		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).
+		For each integer pixel coordinate (x, y) in the bounding box, I compute the sample position at the center of the pixel (x + 0.5, y + 0.5).	
+		</p>
 
+		<p>
 		Point-in-Triangle Test:
 		For each sample point, I use three edge tests. Each test uses a 2D cross product to determine which side of an edge the sample lies on. If the sample lies on the same side of all three edges or directly on them, it is inside the triangle. This handles all triangle winding orders (clockwise or counter-clockwise) and draws pixels.
-		
+		</p>
+			
+		<p>
 		My algorithm is no worse than sampling every pixel in the bounding box because I use the bounding box only computed by min() and max() of the triangle’s vertex coordinates. Also, I only check sample points within this bounding box, not the entire framebuffer. For each sample in the bounding box, I run a point-in-triangle test.
-
-
+		</p>
+			
 		<figure>
-			<img src="Task1_rasterize.png" alt="Task1" style="width:50%"/>
-			<figcaption>You can add images with captions!</figcaption>
+			<img src="Task1_rasterize.png" alt="Task1_raterize.png" style="width:50%"/>
+			<figcaption>Rendered basic/test4.svg</figcaption>
 		</figure>
-
+		
+		<h2>Task 2: Antialiasing by Supersampling</h2>
+		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
@@ -97,10 +108,6 @@
 			  </tr>
 			</table>
 		</div>
-		
-		<h2>Task 2: Antialiasing by Supersampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
 		<h2>Task 3: Transforms</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
