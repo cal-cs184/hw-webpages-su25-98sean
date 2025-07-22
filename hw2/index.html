@@ -186,11 +186,11 @@
 			  <tr>
 				<td style="text-align: center;">
 				  <img src="part3_default.png" width="400px"/>
-				  <figcaption>Default image with flat shading</figcaption>
+				  <figcaption>Default image with flat shading.</figcaption>
 				</td>
 				<td style="text-align: center;">
 				  <img src="part3_Phong.png" width="400px"/>
-				  <figcaption>Image with vertex normal Phong shading</figcaption>
+				  <figcaption>Image with vertex normal Phong shading.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -230,12 +230,12 @@
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="part4_before.png" width="400px"/>
-				  <figcaption>Before edge flips</figcaption>
+				  <img src="part4_teapot_before.png" width="400px"/>
+				  <figcaption>Before edge flips.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="part4_after.png" width="400px"/>
-				  <figcaption>After edge flips</figcaption>
+				  <img src="part4_teapot_after.png" width="400px"/>
+				  <figcaption>After edge flips.</figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -244,12 +244,191 @@
 
 
 			
+
 		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		
+		<p>
+  		To implement the edge split operation, I first identified whether the edge to be split was a regular interior edge or a boundary edge. For non-boundary edges, I created three new edges, six new halfedges, two new faces, and one new vertex positioned at the midpoint of the original edge. I then carefully rewired the <code>next</code>, <code>twin</code>, <code>vertex</code>, <code>edge</code>, and <code>face</code> pointers using <code>setNeighbors</code>, ensuring proper consistency across all components.
+		</p>
 
+		<p>
+  		For boundary edges, only the non-boundary face adjacent to the edge was split, while the boundary face was preserved. This required splitting the boundary halfedge into two and updating the circular pointer chain on the boundary loop, which was tricky but manageable with the help of diagrams.
+		</p>
+
+		<p>
+		The following images are example screenshots showing a mesh before and after applying edge split operations, without any boundary edges.
+		</p>
+			
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_before_split.png" width="400px"/>
+				  <figcaption><code>dae/quadball.dae</code> before splits.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_after_split.png" width="400px"/>
+				  <figcaption><code>dae/quadball.dae</code> after splits.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_before_split.png" width="400px"/>
+				  <figcaption><code>dae/quadball.dae</code> before splits and flips.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_after_split_and_flip.png" width="400px"/>
+				  <figcaption><code>dae/quadball.dae</code> after splits and flips.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+  		In order to support splitting boundary edges, I initially attempted to use <code>nullptr</code> for the face pointer on boundary halfedges. This caused unexpected runtime errors and mesh corruption. I later discovered that assigning the actual boundary face, even if it's a virtual, resolved these errors. That was a crucial turning point in debugging.
+		</p>
+
+		<p>
+		Another challenging issue occurred when a split operation created holes in the mesh. After hours of trying to reason through the logic in code, manually drawing each pointer reassignment helped me spot where <code>next</code> or <code>twin</code> pointers were missing or incorrect, specifically around the boundary edge. Once those were fixed, the mesh behaved as expected and preserved correctly even after edge splits.
+		</p>
+
+		<p>
+  		With these debugging trials, I have also implemented edge splitting support for boundary edges. Only the adjacent non-boundary face is split, and the boundary loop is updated accordingly. Below are screenshots demonstrating a successful split operation on a boundary edge:
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part5_before_extra.png" width="400px"/>
+				  <figcaption>Before edge splits on boundary edges.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part5_after_extra.png" width="400px"/>
+				  <figcaption>After edge splits on boundary edges.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>	
+
+
+
+
+			
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		
+		<p>
+  		To implement Loop subdivision, I followed the five-step strategy outlined in the starter code. First, I computed the new positions of all existing vertices based on whether they were boundary or interior vertices. Interior vertex positions were updated using the standard Loop subdivision weighting rule, while boundary vertices used a linear blend of their immediate neighbors.
+		</p>
 
+		<p>
+  		Next, I computed the new vertex positions associated with each edge, again distinguishing between interior and boundary edges. Interior edges used the 1/8–3/8 weighting rule, while boundary edges simply averaged the two adjacent vertex positions.
+		</p>
+
+		<p>
+  		Then, I split all original edges by checking whether both adjacent vertices were part of the original mesh. New vertices created by these splits inherited the previously computed new positions.
+		</p>
+
+		<p>
+  		After edge splitting, I flipped new edges that connected a new and old vertex to improve mesh regularity. Finally, I copied the new positions into each vertex's current position to complete the update.
+		</p>
+			
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_0.png" width="400px"/>
+				  <figcaption><code>dae/cube.dae</code> before upsampling.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_1.png" width="400px"/>
+				  <figcaption><code>dae/cube.dae</code> after 1 upsampling.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_2.png" width="400px"/>
+				  <figcaption><code>dae/cube.dae</code> after 2 upsamplings.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_3.png" width="400px"/>
+				  <figcaption><code>dae/cube.dae</code> after 3 upsamplings.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+  		As we can see above, I loaded <code>dae/cube.dae</code> and performed several iterations of Loop subdivision. Over time, the cube became asymmetric. This occurs because the original mesh doesn't have perfectly uniform edge lengths or vertex valences, and Loop subdivision accentuates these differences with each pass. Also, after a couple of iterations, I noticed that sharp edges and corners on meshes begin to smooth out noticeably. This is because Loop subdivision uses weighted averages that naturally pull points inward, especially when the surrounding topology is coarse.
+		</p>
+
+		<p>
+  		To avoid the asymmetry, I preprocessed the cube by flipping and splitting edges so that every face has the same attributes. This balanced out the topology so that the subdivision operator distributed vertex positions more uniformly. The result was more symmetric, like the following:
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_split_0.png" width="400px"/>
+				  <figcaption>Preprocessed <code>dae/cube.dae</code> before upsampling.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_split_1.png" width="400px"/>
+				  <figcaption>Preprocessed <code>dae/cube.dae</code> after 1 upsampling.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_split_2.png" width="400px"/>
+				  <figcaption>Preprocessed <code>dae/cube.dae</code> after 2 upsamplings.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_split_3.png" width="400px"/>
+				  <figcaption>Preprocessed <code>dae/cube.dae</code> after 3 upsamplings.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+  		To support boundary edges, when updating the position of a boundary vertex, I used the modified Loop rule:
+		</p>
+		
+		</p>
+		<pre><code>v' = 0.75 * v + 0.125 * (v_prev + v_next)</code></pre>
+		<p>
+
+		<p>
+  		Here, <code>v_prev</code> and <code>v_next</code> are the immediate boundary neighbors. This rule maintains the smoothness of the boundary while preventing the vertex from being pulled inward unnaturally. To find these neighbors, I walked along the vertex’s outgoing halfedges until reaching a boundary, then followed the boundary loop.
+		</p>
+
+		<p>
+ 		When splitting a boundary edge, I placed the new vertex at the midpoint of the edge:
+		</p>
+
+		<p>
+		<pre><code>v_new = 0.5 * (v0 + v1)</code></pre>
+		</p>
+		
+		<p>
+	  	This ensures that the straightness of boundary edges is preserved through subdivision and avoids unwanted curvature at the open boundary.
+		</p>
+		
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="part6_extra_0.png" width="400px"/>
+				  <figcaption>Before upsampling on boundary edges.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="part6_extra_1.png" width="400px"/>
+				  <figcaption>After upsampling on boundary edges.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>	
 		
 		</div>
 	</body>
