@@ -37,10 +37,6 @@
 		<br>
 		Link to GitHub repository: <a href="https://github.com/cal-cs184/hw-webpages-su25-98sean">hw-webpages-su25-98sean</a>
 		
-		<figure>
-			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
-			<figcaption>You can add images with captions!</figcaption>
-		</figure>
 
 		<!--
 		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
@@ -313,7 +309,7 @@
 				  <figcaption><code>CBspheres_lambertian.dae -s 1024 -l 4 -m 3</code></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="Part4_accum_1024_4_3" width="400px"/>
+				  <img src="Part4_accum_1024_4_3.png" width="400px"/>
 				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3</code></figcaption>
 				</td>
 			  </tr>
@@ -517,7 +513,7 @@
 		</div>
 
 		<p>
-		At 1 sample per pixel, the image is very noisy. As I increased the sample per pixel, the image progressively became smoother and more detailed. At 64 samples per pixel, the image was nearly clean, and at 1024 samples per pixel, the rendering was visually indistinguishable from a noise-free result. This demonstrates how increasing samples per pixel improves image quality and convergence, especially in scenes with complex lighting and indirect bounces.
+		At 1 sample per pixel, the image was very noisy. As I increased the sample per pixel, the image progressively became smoother and more detailed. At 64 samples per pixel, the image was nearly clean, and at 1024 samples per pixel, the rendering was visually indistinguishable from a noise-free result. This demonstrates how increasing samples per pixel improves image quality and convergence, especially in scenes with complex lighting and indirect bounces.
 		</p>
 
 
@@ -525,10 +521,34 @@
 
 			
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<p>
+		The following images are rendered with 2048 samples per pixel, 1 sample per light, and <code>max ray depth = 5</code>.
+		</p>
 
-
-
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_1.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 1 right ray, 1 sample/pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_4.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 4 right ray, 1 sample/pixel</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_16.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 16 right ray, 1 sample/pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_64.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 64 right ray, 1 sample/pixel</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 			
 		
