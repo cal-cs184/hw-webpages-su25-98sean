@@ -297,11 +297,28 @@
 
 			
 		<h2>Part 4: Global Illumination</h2>
-
+		<p>
+		I implemented indirect lighting in <code>at_least_one_bounce_radiance()</code> by first computing the direct lighting at the current intersection point. Then, to account for indirect illumination, I sampled a new direction from the BSDF and recursively traced a new ray into the scene. I multiplied the returned radiance from the recursive call by the BSDF value and the cosine term, and divided by the pdf of the BSDF sample. I also used Russian roulette termination for bounce levels greater than or equal to 3 to probabilistically limit the recursion depth and reduce noise. This setup allows light to bounce off surfaces and accumulate global illumination, producing softer lighting and color bleeding effects not possible with direct lighting alone.
+		</p>
+			
 		<p>
 		The following images are rendered with global illumination, both direct and indirect lighting, all with 1024 samples per pixel, 4 light rays, and <code>max_ray_depth</code> of 3.
-
 		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_GI_EX_spheres_1024_4_3.png" width="400px"/>
+				  <figcaption><code>CBspheres_lambertian.dae -s 1024 -l 4 -m 3</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_3" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 			
 		<p>
 		The following images are rendered by either only direct illumination or only indirect illumination, all with 1024 samples per pixel, 4 light rays, and <code>max_ray_depth</code> of 5.
@@ -315,12 +332,16 @@
 				  <figcaption><code>CBspheres_lambertian.dae</code> Only Direct</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="Part4_CBspheres_Only_Indirect_1024_4_5" width="400px"/>
+				  <img src="Part4_CBspheres_Only_Indirect_1024_4_5.png" width="400px"/>
 				  <figcaption><code>CBspheres_lambertian.dae</code> Only Indirect</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
+
+		<p>
+		When rendering with only direct lighting, the image showed strong, well-defined lighting and shadows from visible light sources but appeared flat in areas not directly lit. When rendering with only indirect lighting, the image lacked direct light highlights but displayed smooth gradients and subtle illumination in shadowed areas due to light bouncing off nearby surfaces. This comparison clearly shows how indirect lighting enhances realism by capturing light interactions that direct illumination alone cannot model.
+		</p>
 
 			
 		<p>
@@ -363,7 +384,11 @@
 		</div>
 
 		<p>
-		The following images are rendered <code>CBbunny.dae</code> with the same setup as above, but with <code>isAccumBounces=false</code>.
+		At bounce 2 and 3, I observed more subtle indirect lighting effects like color bleeding and improved illumination in shadowed or occluded regions compared to lower depths. For example, light reflected from nearby walls began to light up the underside and inner areas of the bunny. These higher-order bounces don’t dramatically brighten the scene but contribute to more natural, ambient light and soft shading. Compared to rendering with lower depths, which typically handles only direct lighting and possibly one bounce via screen-space effects, path tracing captures the full complexity of light transport.
+		</p>
+
+		<p>
+		The following images are rendered <code>CBbunny.dae</code> with the same setup as above, but with <code>isAccumBounces=true</code>.
 		</p>
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
@@ -401,6 +426,9 @@
 			</table>
 		</div>	
 
+		<p>
+		My implementation might not provide obvious visual differences between unaccumulated and accumulated renderings. However, theoretically, in unaccumulated mode, each image should show the contribution from only a specific bounce depth, making it easier to isolate the effect of each additional bounce. In contrast, the accumulated mode should combine all bounces up to the specified depth, showing the progressively refined final image. As the bounce depth increased, the accumulated images became more realistic and evenly lit, while the unaccumulated images demonstrated how each individual bounce adds to the final effect.
+		</p>
 			
 		<p>
 		The following images are rendered <code>CBbunny.dae</code> using the Russian Roulette rendering with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 100 using <code>-m</code> flag, all with 1024 samples per pixel and 4 light rays.
@@ -488,6 +516,12 @@
 			</table>
 		</div>
 
+		<p>
+		At 1 sample per pixel, the image is very noisy. As I increased the sample per pixel, the image progressively became smoother and more detailed. At 64 samples per pixel, the image was nearly clean, and at 1024 samples per pixel, the rendering was visually indistinguishable from a noise-free result. This demonstrates how increasing samples per pixel improves image quality and convergence, especially in scenes with complex lighting and indirect bounces.
+		</p>
+
+
+
 
 			
 		<h2>Part 5: Adaptive Sampling</h2>
@@ -497,16 +531,7 @@
 
 
 			
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		
 		</div>
 	</body>
 </html>
