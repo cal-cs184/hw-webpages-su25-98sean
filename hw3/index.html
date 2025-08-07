@@ -35,7 +35,7 @@
 		Link to webpage: <a href="https://cal-cs184.github.io/hw-webpages-su25-98sean/hw3/index.html">hw-webpages-su25-98sean/hw3</a>
 
 		<br>
-		Link to GitHub repository: (TODO) <a href="https://github.com/cal-cs184/hw-webpages-su25-98sean">hw-webpages-su25-98sean</a>
+		Link to GitHub repository: <a href="https://github.com/cal-cs184/hw-webpages-su25-98sean">hw-webpages-su25-98sean</a>
 		
 		<figure>
 			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
@@ -69,27 +69,31 @@
 		<p>
 		After getting <code>t, b1, b2</code> from the Moller-Trumbore algorithm, my implementation checks if <code>t</code> is in range <code>[r.min_t, r.max_t]</code> as well as all the barycentric coefficients are in range <code>[0, 1]</code>.
 		</p>
+
+		<p>
+		As presented below, I was able to render some images with normal shading.
+		</p>
 			
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Part1_CBempty_dae.png" width="400px"/>
+				  <figcaption><code>CBepmty.dae</code></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Part1_CBspheres_lamberditan_dae.png" width="400px"/>
+				  <figcaption><code>CBspheres_lamberditan.dae</code></figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Part1_cow_dae.png" width="400px"/>
+				  <figcaption><code>cow.dae</code></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="Part1_teapot_dae.png" width="400px"/>
+				  <figcaption><code>teapot.dae</code></figcaption>
 				</td>
 			  </tr>
 			</table>
@@ -100,23 +104,389 @@
 
 			
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+		<p>
+		Rendering the last two images, <code>cow.dae</code> and <code>teapot.dae</code>, required a lot of time. To address this issue, I constructed the BVH data structure.  
+		</p>
+
+		<p>
+		For a given BVH node, I first compute the mean 3D position of the centroids. This gives me three candidate split points: one along each axis (X, Y, Z). For each candidate, I then compute a split cost. The cost function is defined as the sum of the surface areas of the child node bounding boxes, multiplied by the number of primitives within each child. Finally, I select the split point that yields the lowest cost, ensuring tighter bounding boxes. This approach significantly improves primitive density within bounding boxes, reducing the chance of unnecessary ray-BVH intersections without hitting an actual primitive.
+		</p>
+
+		<p>
+		I chose the mean centroid position as the split point because, under a reasonable assumption of uniformly distributed primitives, the mean effectively approximates the median. This method gives a well-balanced BVH tree and optimizing construction performance, as it avoids the sorting overhead of a median split.
+		</p>
+			
+		<p>
+		BVH indeed makes the rendering faster. Here's what I experimented:
+		</p>
+
+		<p>
+		<br>
+		<code>Before BVH
+		<br>
+		cow:
+		<br>
+		[PathTracer] Rendering using 1 threads
+		<br>
+		[PathTracer] Collecting primitives... Done! (0.0013 sec)
+		<br>
+		[PathTracer] Building BVH from 5856 primitives... Done! (0.0002 sec)
+		<br>
+		[PathTracer] Rendering... 100%! (78.5540s)
+		<br>
+		[PathTracer] BVH traced 480000 rays.
+		<br>
+		[PathTracer] Average speed 0.0061 million rays per second.
+		<br>
+		[PathTracer] Averaged 5856.000000 intersection tests per ray.
+		</code>
+		</p>
+
+		<p>
+		<code>
+		<br>
+		After BVH
+		<br>
+		cow:
+		<br>
+		[PathTracer] Rendering using 1 threads
+		<br>
+		[PathTracer] Collecting primitives... Done! (0.0014 sec)
+		<br>
+		[PathTracer] Building BVH from 5856 primitives... Done! (0.0157 sec)
+		<br>
+		[PathTracer] Rendering... 100%! (0.2204s)
+		<br>
+		[PathTracer] BVH traced 480000 rays.
+		<br>
+		[PathTracer] Average speed 2.1783 million rays per second.
+		<br>
+		[PathTracer] Averaged 0.000000 intersection tests per ray.
+		</code>
+		</p>
+
+		<p>
+		<code>
+		<br>
+		Before BVH
+		<br>
+		teapot:
+		<br>
+		[PathTracer] Rendering using 1 threads
+		<br>
+		[PathTracer] Collecting primitives... Done! (0.0006 sec)
+		<br>
+		[PathTracer] Building BVH from 2464 primitives... Done! (0.0001 sec)
+		<br>
+		[PathTracer] Rendering... 100%! (26.2509s)
+		<br>
+		[PathTracer] BVH traced 480000 rays.
+		<br>
+		[PathTracer] Average speed 0.0183 million rays per second.
+		<br>
+		[PathTracer] Averaged 2464.000000 intersection tests per ray.
+		</code>
+		</p>
+
+		<p>
+		<code>
+		<br>
+		After BVH
+		<br>
+		teapot:
+		<br>
+		[PathTracer] Rendering using 1 threads
+		<br>
+		[PathTracer] Collecting primitives... Done! (0.0009 sec)
+		<br>
+		[PathTracer] Building BVH from 2464 primitives... Done! (0.0060 sec)
+		<br>
+		[PathTracer] Rendering... 100%! (0.2134s)
+		<br>
+		[PathTracer] BVH traced 480000 rays.
+		<br>
+		[PathTracer] Average speed 2.2497 million rays per second.
+		<br>
+		[PathTracer] Averaged 0.000000 intersection tests per ray.
+		</code>
+		</p>
+
+		<p>
+		To assess the performance benefits of BVH acceleration, I rendered two moderately complex scenes, <code>cow.dae</code> (5856 primitives) and <code>teapot.dae</code> (2464 primitives), again, but now with BVH. Without BVH, rendering times were excessively long, with the <code>cow.dae</code> scene taking 78.55 seconds and the <code>teapot.dae</code> scene requiring 26.25 seconds to trace 480,000 rays. I noticed that an average ray-tracing speed is merely 0.0061-0.0183 million rays per second, demanding thousands of intersection tests per ray against all scene primitives.	
+		</p>
+
+		<p>
+		In contrast, after integrating BVH acceleration, rendering times significantly decreased to just 0.22 seconds for <code>cow.dae</code> and 0.21 seconds for <code>teapot.dae</code> for the same number of rays. This represents a huge speed improvement, boosting average ray-tracing speeds to over 2.17-2.24 million rays per second, a roughly 100-350 fold increase in performance. The dramatically reduced rendering times, alongside a significant drop in average intersection tests per ray.
+		</p>
 
 
 
 
 			
 		<h2>Part 3: Direct Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+		<p>
+		I implemented two versions of direct light sampling for <code>one_bounce_radiance()</code>: one using uniform hemisphere sampling and the other one using importance sampling over the scene lights. In the uniform hemisphere sampling implementation, I sampled directions uniformly over the hemisphere around the hit point, transformed the sampled direction into world space, and cast a shadow ray to check for visibility. If the ray reached an emitter, I evaluated the BSDF and weighted the contribution by the cosine term and the uniform pdf. In the light sampling implementation, I iterated over the scene's lights and directly sampled each light source to get a direction, distance, and radiance. I then checked for occlusion with a shadow ray and, if unoccluded, evaluated the BSDF and included the contribution weighted by the cosine term and the light's sampling pdf. This implementation is more efficient since it focuses samples toward the light sources rather than scattering them across the entire hemisphere.
+		</p>
+			
+		<p>
+		The following images are rendered with either hemisphere sampling or importance sampling. We can clearly see that the direct lighting with importance sampling produces smoother and more realistic results.
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_3_CBbunny_H_16_32.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 16 -l 32 -H</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_16_32.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 16 -l 32</code></figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_CBspheres_H_16_8.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 16 -l 8 -H</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_CBsperes_I_16_8.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 16 -l 8</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+			
+		<p>
+		The following images show various noise levels from the importance lights sampling depending on different numbers of light rays. When rendering with light sampling and 1 sample per pixel <code>-s 1</code>, I tested 1, 4, 16, and 64 light rays using <code>-l</code> tag and observed a clear reduction in noise as the number of light rays increased. With only 1 light ray, the shadows were very noisy, but at 64 rays, the soft shadows appeared much smoother and more realistic. 
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_1.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 1 right ray, 1 sample/pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_4.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 4 right ray, 1 sample/pixel</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_16.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 16 right ray, 1 sample/pixel</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part3_4_CBbunny_1_64.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code> with 64 right ray, 1 sample/pixel</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+		Comparing uniform hemisphere sampling to light sampling, I found that light sampling produced significantly less noise for the same number of samples. This is because it directs rays toward the light sources rather than distributing them evenly across the hemisphere, resulting in more efficient convergence and better visual quality.
+		</p>
 
 
 
 
 			
 		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+		<p>
+		The following images are rendered with global illumination, both direct and indirect lighting, all with 1024 samples per pixel, 4 light rays, and <code>max_ray_depth</code> of 3.
 
+		</p>
+			
+		<p>
+		The following images are rendered by either only direct illumination or only indirect illumination, all with 1024 samples per pixel, 4 light rays, and <code>max_ray_depth</code> of 5.
+		</p>
+		
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_CBspheres_Only_Direct_1024_4_5.png" width="400px"/>
+				  <figcaption><code>CBspheres_lambertian.dae</code> Only Direct</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_CBspheres_Only_Indirect_1024_4_5" width="400px"/>
+				  <figcaption><code>CBspheres_lambertian.dae</code> Only Indirect</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+			
+		<p>
+		The following images are rendered <code>CBbunny.dae</code> with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 5 using <code>-m</code> flag, <code>isAccumBounces=false</code> using <code>-o</code> flag, and all with 1024 samples per pixel.
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_0.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 0 -o 0</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_1.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 1 -o 0</code></figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_2.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 2 -o 0</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3 -o 0</code></figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_4.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 4 -o 0</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_unaccum_1024_4_5.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 5 -o 0</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<p>
+		The following images are rendered <code>CBbunny.dae</code> with the same setup as above, but with <code>isAccumBounces=false</code>.
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_0.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 0</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_1.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 1</code></figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_2.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 2</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_4.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 4</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_5.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 5</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>	
+
+			
+		<p>
+		The following images are rendered <code>CBbunny.dae</code> using the Russian Roulette rendering with <code>max_ray_depth</code> set to 0, 1, 2, 3, 4, and 100 using <code>-m</code> flag, all with 1024 samples per pixel and 4 light rays.
+
+		</p>
+			
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_0.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 0</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_1.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 1</code></figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_2.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 2</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_4.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 4</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_100.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 100</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+			
+		<p>
+		The following images are rendered with various sample-per-pixel rates: 1, 2, 4, 8, 16, 64, and 1024, all with 4 light rays and a maximum depth of 3.
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1 -l 4 -m 3</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_2_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 2 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_4_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 4 -l 4 -m 3</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_8_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 8 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_16_4_3.png " width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 16 -l 4 -m 3</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_64_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 64 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+			  </tr>
+				<tr>
+				<td style="text-align: center;">
+				  <img src="Part4_accum_1024_4_3.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 1024 -l 4 -m 3</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 
 			
