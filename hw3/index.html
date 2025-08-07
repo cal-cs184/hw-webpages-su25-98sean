@@ -216,6 +216,25 @@
 		In contrast, after integrating BVH acceleration, rendering times significantly decreased to just 0.22 seconds for <code>cow.dae</code> and 0.21 seconds for <code>teapot.dae</code> for the same number of rays. This represents a huge speed improvement, boosting average ray-tracing speeds to over 2.17-2.24 million rays per second, a roughly 100-350 fold increase in performance. The dramatically reduced rendering times, alongside a significant drop in average intersection tests per ray.
 		</p>
 
+		<p>
+		After this stage, I could render images like the following much faster!
+		</p>
+
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="Part2_maxplanck_dae.png" width="400px"/>
+				  <figcaption><code>maxplanck.dae</code></figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="Part2_CBlucy_dae.png" width="400px"/>
+				  <figcaption><code>CBlucy.dae</code></figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
 
 
 
@@ -521,35 +540,54 @@
 
 			
 		<h2>Part 5: Adaptive Sampling</h2>
+		
 		<p>
-		The following images are rendered with 2048 samples per pixel, 1 sample per light, and <code>max ray depth = 5</code>.
+		Adaptive sampling is a technique used in ray tracing to reduce rendering time by allocating more samples to complex regions of the image and fewer samples to simpler ones. Instead of taking a fixed number of samples per pixel, adaptive sampling stops early for pixels that have already converged, based on statistical confidence, which leads to a more efficient use of computational resources.
+		</p>
+
+		<p>
+		In my implementation, I modified <code>PathTracer::raytrace_pixel()</code> function to support adaptive sampling. I used two running sums to track the illuminance of each sample: s1 for the sum of illuminance values and s2 for the sum of squared illuminance values. Every <code>samplesPerBatch</code> samples, I computed the sample mean and variance, and used them to calculate the 95% confidence interval of the pixel's average illuminance. If the confidence interval fell below a threshold defined as a percentage of the mean, specified by <code>maxTolerance</code>, I considered the pixel to have converged and stopped sampling early. Otherwise, I continued sampling up to a maximum of <code>ns_aa samples</code>. I also updated <code>sampleCountBuffer</code> to store the actual number of samples taken per pixel so I could visualize the sampling rate across the image. This implementation ensures that adaptive sampling is both statistically grounded and performance-efficient.
+		</p>
+			
+		<p>
+		The following images are rendered with 2048 samples per pixel, 1 sample per light, and <code>max ray depth = 5</code>. Also, I enabled adaptive sampling: every 64 samples, check the 95% confidence interval and compare to 5% of the mean.
 		</p>
 
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="Part3_4_CBbunny_1_1.png" width="400px"/>
-				  <figcaption><code>CBbunny.dae</code> with 1 right ray, 1 sample/pixel</figcaption>
+				  <img src="Part5_bunny.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae -s 2048 -a 64 0.05 -l 1 -m 5</code></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="Part3_4_CBbunny_1_4.png" width="400px"/>
-				  <figcaption><code>CBbunny.dae</code> with 4 right ray, 1 sample/pixel</figcaption>
+				  <img src="Part5_bunny_rate.png" width="400px"/>
+				  <figcaption><code>CBbunny.dae</code>sample rate</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="Part3_4_CBbunny_1_16.png" width="400px"/>
-				  <figcaption><code>CBbunny.dae</code> with 16 right ray, 1 sample/pixel</figcaption>
+				  <img src="Part5_spheres.png" width="400px"/>
+				  <figcaption><code>CBspheres_lambertian.dae -s 2048 -a 64 0.05 -l 1 -m 5</code></figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="Part3_4_CBbunny_1_64.png" width="400px"/>
-				  <figcaption><code>CBbunny.dae</code> with 64 right ray, 1 sample/pixel</figcaption>
+				  <img src="Part5_spheres_rate.png" width="400px"/>
+				  <figcaption><code>CBspheres_lambertian.dae</code>sample rate</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 
+
+
+
+
+		<h2>Acknowledgement of AI</h2>
+		
+		<p>
+		I utilized ChatGPT for debugging Part 4, implemting Part 5, and this write-up.
+		Specifically, I was able to fix sphere intersection logic and make initial function logic with AI.
+		</p>
 			
 		
 		</div>
