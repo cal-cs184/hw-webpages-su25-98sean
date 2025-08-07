@@ -47,15 +47,29 @@
 		-->
 
 		<h2>Overview</h2>
-		In this project, I built a pathtracer in order to support realistic lightings and shadows. As builing blocks for the path tracer, I started with implementing the functions for sampling intersections with triangles and spheres, followed by builing the Bounding Volume Hierarchies (BVH) for efficient sampling. With these building blocks, I tried to build various illumination techniques such as direct illumination with zero-bounce radiance and one-bounce radiance. For one-bounce radiance, I enabled the hemisphere sampling and importance sampling. In addition, by introducing indirect illumination with Russian roulette, the images are now more realistic and smooth.
+		In this project, I built a pathtracer in order to support realistic lightings and shadows. As builing blocks for the path tracer, I started with implementing the functions for sampling intersections with triangles and spheres, followed by builing the Bounding Volume Hierarchies (BVH) for efficient sampling. With these building blocks, I tried to build various illumination techniques such as direct illumination with zero-bounce radiance and one-bounce radiance. For one-bounce radiance, I enabled the hemisphere sampling and importance sampling. In addition, by introducing indirect illumination with Russian roulette, the images became more realistic and smooth.
 
 
 
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<p>
+		In terms of the ray generation and primitive intersection parts of the rendering pipeline, the program first computes the position of the input sensor sample coordinate on the canonical sensor plane one unit away from the pinhole. That is, <code>Camera::generate_ray()</code> assumes that the virtual camera sensor is on <code>z = -1</code> and the center is at <code>(0, 0, -1)</code>, and converts the bottom left coordinate into <code>(0, 0) -> (-tan(hFov/2), -tan(vFov/2), -1)</code> and the top right coordinate into <code>(1, 1) -> (tan(hFov/2), tan(vFov/2), -1)</code>.
+		</p>
+
+		<p>
+		This function, <code>Camera::generate_ray()</code>, is called by <code>PathTracer::raytrace_pixel()</code> for each pixel with the number of samples, and <code>PathTracer::est_radiance_global_illumination</code> is also called in the function to obtain the radiance.
+		</p>
+
+		<p>
+		For the ray-triangle intersection, I use the Moller-Trumbore algorithm from discussion, which implies that given the barycentric coordinates <code>P = (1 - b1 - b2) * P0 + b1* P1 + b2 * P2</code> and the equation of a ray <code>r(t) = O + tD</code>, <code>[t b1 b2]^T = (1 / (S1 dot E1)) [(S2 dot E2) (S1 dot S) (S2 dot D)]^T</code> where <code>E1 = P1 – P0, Е2 = P2 – P0, S = O – P0, S1 = D × E2, S2 = S × E1</code>.	
+		</p>
+
+		<p>
+		After getting <code>t, b1, b2</code> from the Moller-Trumbore algorithm, my implementation checks if <code>t</code> is in range <code>[r.min_t, r.max_t]</code> as well as all the barycentric coefficients are in range <code>[0, 1]</code>.
+		</p>
+			
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -80,22 +94,39 @@
 			  </tr>
 			</table>
 		</div>
-		
+
+
+
+
+			
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+
+
+
+			
 		<h2>Part 3: Direct Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+
+
+
+			
 		<h2>Part 4: Global Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+
+
+
+			
 		<h2>Part 5: Adaptive Sampling</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-		
+
+
+
+			
 		<h2>Additional Notes (please remove)</h2>
 		<ul>
 			<li>You can also add code if you'd like as so: <code>code code code</code></li>
