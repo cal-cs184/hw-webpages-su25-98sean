@@ -27,13 +27,15 @@
 	</head>
 	<body>
 		<div class="container">
-		<h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<h1>CS184 Summer 2025 Homework 3 Write-Up</h1>
+		<div style="text-align: center;">Name: Sean Lee</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cal-cs184.github.io/hw-webpages-su25-98sean/hw3/index.html">hw-webpages-su25-98sean/hw3</a>
+
+		<br>
+		Link to GitHub repository: (TODO) <a href="https://github.com/cal-cs184/hw-webpages-su25-98sean">hw-webpages-su25-98sean</a>
 		
 		<figure>
 			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
@@ -45,7 +47,10 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		In this project, I built a pathtracer in order to support realistic lightings and shadows. As builing blocks for the path tracer, I started with implementing the functions for sampling intersections with triangles and spheres, followed by builing the Bounding Volume Hierarchies (BVH) for efficient sampling. With these building blocks, I tried to build various illumination techniques such as direct illumination with zero-bounce radiance and one-bounce radiance. For one-bounce radiance, I enabled the hemisphere sampling and importance sampling. In addition, by introducing indirect illumination with Russian roulette, the images are now more realistic and smooth.
+
+
+
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
